@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ArrowRight } from "@mui/icons-material";
 
 type Column<T> = {
   key: keyof T;
@@ -9,7 +10,6 @@ type Column<T> = {
 function Table<T extends { id: number } | { uuid: string }>({
   data,
   columns,
-  onSelectionChange,
   onRowClick,
 }: {
   data: T[];
@@ -21,75 +21,60 @@ function Table<T extends { id: number } | { uuid: string }>({
 
   const rowKey = (row: T): number | string => ("id" in row ? row.id : row.uuid);
 
-  const updateSelection = (next: (number | string)[]) => {
-    setSelected(next);
-    onSelectionChange?.(next);
-  };
-
-  const toggleAll = () => {
-    const next = selected.length === data.length ? [] : data.map(rowKey);
-    updateSelection(next);
-  };
-
-  const toggleRow = (key: number | string) => {
-    const next = selected.includes(key)
-      ? selected.filter((s) => s !== key)
-      : [...selected, key];
-    updateSelection(next);
-  };
-
   return (
-    <table className="text-text-on-primary w-full text-left">
-      <thead className="bg-surface-secondary">
-        <tr>
-          <th className="border-r border-b  border-outline-common py-sm text-center">
-            <input
-              type="checkbox"
-              checked={data.length > 0 && selected.length === data.length}
-              onChange={toggleAll}
-            />
-          </th>
-          {columns.map((col) => (
-            <th
-              className="border-r border-b border-outline-common px-sm"
-              key={String(col.key)}
-            >
-              {col.label}
-            </th>
-          ))}
-        </tr>
-      </thead>
-      <tbody>
-        {data.map((row) => (
-          <tr
-            className={`border-b border-outline-common${onRowClick ? " cursor-pointer hover:bg-surface-secondary" : ""}`}
-            key={rowKey(row)}
-            onClick={() => onRowClick?.(row)}
-          >
-            <td className="py-sm px-sm border-r text-center border-outline-common">
-              <input
-                type="checkbox"
-                checked={selected.includes(rowKey(row))}
-                onClick={(e) => e.stopPropagation()}
-                onChange={(e) => {
-                  toggleRow(rowKey(row));
-                }}
-              />
-            </td>
+    <div className="w-full overflow-hidden rounded-[10px] border border-surface">
+      <table className="w-full text-left">
+        <thead>
+          <tr className="bg-blue-gray-200">
             {columns.map((col) => (
-              <td
-                className="py-sm px-sm border-r border-outline-common"
+              <th
                 key={String(col.key)}
+                className="border-b border-surface px-4 py-3 text-[12px] font-semibold uppercase tracking-wide text-blue-gray-500"
               >
-                {col.render
-                  ? col.render(row[col.key], row)
-                  : String(row[col.key])}
-              </td>
+                {col.label}
+              </th>
             ))}
+            <th className="w-10 border-b border-surface py-3 px-3 text-center"></th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+        </thead>
+
+        <tbody>
+          {data.map((row, i) => {
+            const key = rowKey(row);
+            const isSelected = selected.includes(key);
+            return (
+              <tr
+                key={key}
+                onClick={() => onRowClick?.(row)}
+                className={[
+                  "border-b border-surface transition-colors duration-100",
+                  i % 2 === 0 ? "bg-surface-variant" : "bg-white",
+                  isSelected ? "bg-blue-gray-100" : "",
+                  onRowClick ? "cursor-pointer hover:bg-blue-50" : "",
+                ].join(" ")}
+              >
+                {columns.map((col) => (
+                  <td
+                    key={String(col.key)}
+                    className="px-4 py-3 text-[16px] font-semibold text-blue-gray-600"
+                  >
+                    {col.render
+                      ? col.render(row[col.key], row)
+                      : String(row[col.key])}
+                  </td>
+                ))}
+                <td className=" flex justify-center items-center px-4 py-10">
+                  <button className="flex items-center justify-center bg-primary gap-[10px] rounded-[10px] px-3 py-3 text-surface font-medium tracking-wide transition-colors duration-150 hover:opacity-70 cursor-pointer">
+                    Selectionar
+                    <ArrowRight />
+                  </button>
+                </td>
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

@@ -100,11 +100,14 @@ export default function PatientRegister() {
           Insira o paciente a ser atendido
         </p>
       </div>
-      <div className=" flex flex-row justify-between gap-240 ">
+      <div className=" flex flex-row justify-between">
         <TextInput leftIcon={<Search />} placeholder="Pesquisar Paciente" />
-        <Button rightIcon={<LibraryAdd />}>Fichar Novo Paciente</Button>
+        <Button rightIcon={<LibraryAdd />}
+        >
+          Fichar Novo Paciente
+        </Button>
       </div>
-      <div  className="flex flex-col ">
+      <div className="flex flex-col ">
         <Table
           data={MOCK_PATIENTS}
           columns={COLUMNS}

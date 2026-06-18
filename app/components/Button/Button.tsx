@@ -8,7 +8,6 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   isLoading?: boolean;
   rightIcon?: ReactNode;
 }
-
 export function Button({
   variant = "primary",
   isLoading = false,
@@ -19,13 +18,13 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "flex items-center justify-center gap-[10px] rounded-[10px] text-base font-medium tracking-wide transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60 hover:cursor-pointer hover:bg-blue-gray-400"; ;
+    "flex items-center justify-center gap-[10px] rounded-[10px] text-base font-medium tracking-wide transition-colors duration-150 disabled:cursor-not-allowed disabled:opacity-60 cursor-pointer";
 
   const variants = {
     primary:
-      "h-14 w-full bg-primary text-white hover:bg-primary-dark active:bg-primary-dark/80",
+      "h-[52px] px-5 bg-primary text-blue-gray-100 hover:opacity-70 active:bg-blue-gray-700",
     ghost:
-      "rounded-lg px-[18px] py-[10px] text-sm font-medium whitespace-nowrap bg-transparent text-primary hover:bg-surface-secondary",
+      "rounded-lg px-[18px] py-[10px] text-sm font-medium whitespace-nowrap bg-transparent text-primary hover:bg-surface",
   };
 
   return (
