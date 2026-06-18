@@ -2,7 +2,7 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { RouteConfig, routes } from "@/config/Routes";
+import { RouteConfig, sidebarRoutes } from "@/config/Routes";
 import Image from "next/image";
 import { Button } from "@/app/components/Button/Button";
 
@@ -54,7 +54,7 @@ export default function Sidebar() {
         </div>
         {/* tabs */}
         <div className="flex flex-col gap-3 px-sm pt-md flex-1">
-          {routes.map((route) => (
+          {sidebarRoutes.map((route) => (
             <NavItem
               key={route.path}
               route={route}
