@@ -23,6 +23,7 @@ export function TextInput({
       <input
         className={`flex-1 bg-transparent text-[15px] text-brand-700 outline-none placeholder:text-brand-400 ${className}`}
         placeholder={placeholder}
+        {...props}
       />
       {rightSlot && (
         <span className="flex shrink-0 items-center">{rightSlot}</span>

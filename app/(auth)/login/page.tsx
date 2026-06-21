@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { TextInput } from "../../components/TextInput/TextInput";
 import { Button } from "../../components/Button/Button";
 import { ToggleSwitch } from "../../components/ToggleSwitch/ToggleSwitch";
@@ -7,10 +9,39 @@ import Image from "next/image";
 import PersonIcon from "@mui/icons-material/Person";
 import LockIcon from "@mui/icons-material/Lock";
 import ArrowIcon from "@mui/icons-material/ArrowForwardIos";
+import { useAuth } from "../../context/AuthContext";
+import { ApiError } from "../../lib/api";
 
 export default function login() {
+  const [emailLogin, setEmailLogin] = useState("");
+  const [senha, setSenha] = useState("");
+  const [erro, setErro] = useState<string | null>(null);
+  const [carregando, setCarregando] = useState(false);
+
+  const { login: fazerLogin } = useAuth();
+  const router = useRouter();
+
+  async function handleSubmit(event: React.FormEvent) {
+    event.preventDefault();
+    setErro(null);
+    setCarregando(true);
+
+    try {
+      await fazerLogin(emailLogin, senha);
+      router.push("/appointment");
+    } catch (e) {
+      if (e instanceof ApiError && e.status === 401) {
+        setErro("Email ou senha incorretos.");
+      } else {
+        setErro("Não foi possível entrar agora. Tente novamente em alguns instantes.");
+      }
+    } finally {
+      setCarregando(false);
+    }
+  }
+
   return (
-    <div className="flex flex-row justify-center h-screen">
+    <form onSubmit={handleSubmit} className="flex flex-row justify-center h-screen">
       <div className="relative flex flex-col w-full h-full overflow-hidden bg-blue-200">
         <Image
           src="/images/bg-image.png"
@@ -43,6 +74,10 @@ export default function login() {
             <TextInput
               leftIcon={<PersonIcon />}
               placeholder="email@dominio.com"
+              type="email"
+              value={emailLogin}
+              onChange={(e) => setEmailLogin(e.target.value)}
+              required
             />
             <div className="flex flex-row justify-between">
               <p>Senha</p>
@@ -50,7 +85,14 @@ export default function login() {
                 Esqueceu a senha?
               </p>
             </div>
-            <TextInput leftIcon={<LockIcon />} placeholder="*********" />
+            <TextInput
+              leftIcon={<LockIcon />}
+              placeholder="*********"
+              type="password"
+              value={senha}
+              onChange={(e) => setSenha(e.target.value)}
+              required
+            />
             <div className="flex flex-row gap-4">
               <input
                 type="checkbox"
@@ -60,10 +102,13 @@ export default function login() {
                 Lembrar neste dispositivo?
               </p>
             </div>
+            {erro && <p className="text-sm text-red-500">{erro}</p>}
           </div>
-          <Button rightIcon={<ArrowIcon />}>Entrar</Button>
+          <Button type="submit" rightIcon={<ArrowIcon />} isLoading={carregando}>
+            Entrar
+          </Button>
         </div>
       </div>
-    </div>
+    </form>
   );
 }

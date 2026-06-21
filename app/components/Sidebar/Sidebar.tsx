@@ -5,6 +5,7 @@ import Link from "next/link";
 import { RouteConfig, routes } from "@/config/Routes";
 import Image from "next/image";
 import { Button } from "@/app/components/Button/Button";
+import { useAuth } from "@/app/context/AuthContext";
 
 import { Add, ExitToApp } from "@mui/icons-material";
 
@@ -34,6 +35,7 @@ function NavItem({ route, active }: { route: RouteConfig; active: boolean }) {
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const { loginUsuario, logout } = useAuth();
 
   const isActive = (path: string) =>
     pathname === path || pathname.startsWith(path + "/");
@@ -78,16 +80,18 @@ export default function Sidebar() {
               alt="logo"
             />
             <div className="flex flex-col">
-              <p className=" text-blue-gray-600 font-bold">Administrador</p>
-              <p className=" text-blue-gray-600 font-regular">
-                email@gmail.com
+              {/* O backend ainda não tem um endpoint "/usuarios/me", então só
+                  conseguimos mostrar o login (geralmente o e-mail) que a
+                  pessoa digitou — não o nome real nem o papel (cargo). */}
+              <p className=" text-blue-gray-600 font-bold">
+                {loginUsuario ?? "Usuário"}
               </p>
             </div>
           </div>
-          <button 
-            onClick={() => {}}
+          <button
+            onClick={logout}
             className="bg-transparent text-blue-gray-600 hover:text-blue-gray-400 w-fit"
-            >
+          >
             <ExitToApp />
           </button>
         </div>
