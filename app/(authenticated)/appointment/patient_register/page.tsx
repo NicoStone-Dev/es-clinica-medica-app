@@ -3,7 +3,16 @@
 import { TextInput } from "@/app/components/TextInput/TextInput";
 import Table from "@/app/components/Table/Table";
 import { Button } from "@/app/components/Button/Button";
-import { Search, LibraryAdd } from "@mui/icons-material";
+import {
+  Search,
+  LibraryAdd,
+  Person,
+  Email,
+  Phone,
+  Home,
+} from "@mui/icons-material";
+import Modal from "@/app/components/Modal/Modal";
+import { useState } from "react";
 
 type Patient = {
   id: number;
@@ -90,8 +99,10 @@ const COLUMNS = [
 ];
 
 export default function PatientRegister() {
+  const [isModalOpen, setIsModalOpen] = useState(true);
+
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 px-16">
       <div className="gap-0">
         <h1 className="text-primary font-semibold text-body-emph">
           Realizando Fichamento do Paciente
@@ -102,8 +113,7 @@ export default function PatientRegister() {
       </div>
       <div className=" flex flex-row justify-between">
         <TextInput leftIcon={<Search />} placeholder="Pesquisar Paciente" />
-        <Button rightIcon={<LibraryAdd />}
-        >
+        <Button rightIcon={<LibraryAdd />} onClick={() => setIsModalOpen(true)}>
           Fichar Novo Paciente
         </Button>
       </div>
@@ -115,6 +125,154 @@ export default function PatientRegister() {
           onRowClick={(row) => console.log("clicked:", row)}
         />
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        title="Fichar Novo Paciente"
+      >
+        <div className="flex flex-row bg-transparent justify-between text-blue-gray-600 gap-12 m-xl mb-xs">
+          {/* form colum 1 */}
+          {/*   nome, email, telefone, cpf */}
+          <div className="flex flex-col w-full gap-5 border-r px-10 border-blue-gray-200 ">
+            <div className="flex flex-row items-center gap-4">
+              <Person />
+              <p className="font-bold text-body-emph"> Informações Pessoais</p>
+            </div>
+            <div className="flex flex-col w-full justify-center">
+              <p>Nome Completo</p>
+              <TextInput
+                leftIcon={<Person />}
+                placeholder="Nome Completo"
+                type="text"
+              />
+            </div>
+            <div className="flex flex-col w-full justify-center">
+              <p>CPF</p>
+              <TextInput
+                leftIcon={<Person />}
+                placeholder="123.456.789-01"
+                type="cpf"
+                inputMode="numeric"
+                pattern="[0-9]{11}"
+                maxLength={11}
+                onChange={(e) => {
+                  // Remove any non-digit characters
+                  e.target.value = e.target.value.replace(/\D/g, "");
+                }}
+              />
+            </div>
+            <div className="flex flex-col w-full justify-center">
+              <p>Telefone</p>
+              <TextInput
+                leftIcon={<Phone />}
+                placeholder="(99) 9 9999-9999"
+                type="tel"
+                inputMode="numeric"
+                pattern="[0-9]{16}"
+                maxLength={11}
+                onChange={(e) => {
+                  e.target.value = e.target.value.replace(/\D/g, "");
+                }}
+              />
+            </div>
+            <div className="flex flex-col w-full justify-center">
+              <p>Email</p>
+              <TextInput
+                leftIcon={<Email />}
+                placeholder="Email"
+                type="email"
+              />
+            </div>
+          </div>
+          {/* form colum 2 */}
+          <div className="flex flex-col w-full pr-10 gap-5">
+            <div className="flex flex-row items-center gap-4">
+              <Home />
+              <p className="font-bold text-body-emph"> Endereço</p>
+            </div>
+
+            {/* Cidade + UF */}
+            <div className="flex flex-row gap-4">
+              <div className="flex flex-col w-full justify-center">
+                <p>Cidade</p>
+                <TextInput placeholder="Ex: São Paulo" type="text" />
+              </div>
+              <div className="flex flex-col w-full justify-center">
+                <p>UF</p>
+                <TextInput
+                  placeholder="SP"
+                  type="text"
+                  maxLength={2}
+                  onChange={(e) => {
+                    // Only letters, uppercase, max 2
+                    e.target.value = e.target.value
+                      .replace(/[^a-zA-Z]/g, "")
+                      .toUpperCase()
+                      .slice(0, 2);
+                  }}
+                  className="uppercase"
+                />
+              </div>
+            </div>
+
+            {/* Rua + Casa */}
+            <div className="flex flex-row gap-4">
+              <div className="flex flex-col w-full justify-center">
+                <p>Rua</p>
+                <TextInput placeholder="Ex: Av. Paulista" type="text" />
+              </div>
+              <div className="flex flex-col w-full justify-center">
+                <p>Casa</p>
+                <TextInput
+                  placeholder="Número"
+                  type="text"
+                  inputMode="numeric"
+                  pattern="[0-9]*"
+                  onChange={(e) => {
+                    e.target.value = e.target.value.replace(/\D/g, "");
+                  }}
+                />
+              </div>
+            </div>
+
+            {/* CEP + Bairro */}
+            <div className="flex flex-row gap-4">
+              <div className="flex flex-col w-full justify-center">
+                <p>CEP</p>
+                <TextInput
+                  placeholder="00000-000"
+                  type="text"
+                  inputMode="numeric"
+                  maxLength={9}
+                  onChange={(e) => {
+                    const raw = e.target.value.replace(/\D/g, "");
+                    let formatted = raw;
+                    if (raw.length > 5) {
+                      formatted = `${raw.slice(0, 5)}-${raw.slice(5, 8)}`;
+                    }
+                    e.target.value = formatted;
+                  }}
+                />
+              </div>
+              <div className="flex flex-col w-full justify-center">
+                <p>Bairro</p>
+                <TextInput placeholder="Ex: Centro" type="text" />
+              </div>
+            </div>
+
+            {/* Complemento */}
+            <div className="flex flex-col w-full justify-center">
+              <p>Complemento</p>
+              <TextInput placeholder="Apto, bloco, etc." type="text" />
+            </div>
+          </div>
+        </div>
+        <div className="flex justify-end gap-md">
+          <Button type="button" onClick={() => setIsModalOpen(false)}>
+            Salvar
+          </Button>
+        </div>
+      </Modal>
     </div>
   );
 }
