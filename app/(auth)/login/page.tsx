@@ -96,7 +96,7 @@ export default function login() {
             <div className="flex flex-row gap-4">
               <input
                 type="checkbox"
-                className="flex w-4 h-4 outline-0 rounded-xs cursor-pointer inset-shadow-sm bg-blue-200 "
+                className="flex accent-primary w-4 h-4 outline-0 rounded-xs cursor-pointer inset-shadow-sm bg-blue-200 "
               />
               <p className="font-regular text-small text-blue-gray-400 underline">
                 Lembrar neste dispositivo?

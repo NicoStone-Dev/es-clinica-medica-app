@@ -5,7 +5,7 @@ import { NextRequest, NextResponse } from "next/server";
 // mas ainda não têm page.tsx criado. Adicione aqui conforme forem sendo criadas.
 const ROTAS_PROTEGIDAS = ["/dashboard", "/appointment", "/management", "/settings"];
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const token = request.cookies.get("clinica_token")?.value;
   const { pathname } = request.nextUrl;
 

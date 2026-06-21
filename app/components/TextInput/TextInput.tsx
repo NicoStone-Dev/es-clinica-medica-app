@@ -16,12 +16,12 @@ export function TextInput({
   ...props
 }: TextInputProps) {
   return (
-    <div className="flex h-[52px] w-full items-center gap-[10px] rounded-[10px] border-[1.5px] border-surface bg-surface-variant px-[14px] text-brand-400 transition-colors duration-150 focus-within:border-primary focus-within:bg-blue-50">
+    <div className="flex h-[52px] w-[350px] items-center gap-[10px] rounded-[10px] border-[1.5px] border-surface bg-surface-variant px-[14px] text-blue-gray-400 transition-colors duration-150 focus-within:border-primary focus-within:bg-blue-gray-100">
       {leftIcon && (
         <span className="flex shrink-0 items-center">{leftIcon}</span>
       )}
       <input
-        className={`flex-1 bg-transparent text-[15px] text-brand-700 outline-none placeholder:text-brand-400 ${className}`}
+        className={`flex-1 bg-transparent text-[15px] text-blue-gray-600 outline-none placeholder:text-blue-gray-400 ${className}`}
         placeholder={placeholder}
         {...props}
       />
