@@ -24,7 +24,7 @@ export default function AppointmentLayout({
         <div className="flex items-center justify-center w-full">
           <TimeLineTracker />
         </div>
-        {children}
+        <div className="flex flex-col px-10">{children}</div>
       </div>
     </AppointmentProvider>
   );

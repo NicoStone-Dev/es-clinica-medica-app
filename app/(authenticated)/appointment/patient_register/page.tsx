@@ -109,7 +109,7 @@ export default function PatientRegister() {
   );
 
   return (
-    <div className="flex flex-col gap-4 px-16">
+    <div className="flex flex-col gap-4">
       <div className="gap-0">
         <h1 className="text-primary font-semibold text-body-emph">
           Realizando Fichamento do Paciente
