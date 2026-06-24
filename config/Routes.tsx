@@ -6,10 +6,14 @@ import {
   AssignmentInd,
   MedicalServices,
   Event,
-  FactCheck
+  FactCheck,
+  Today,
+  Group,
+  Sick,
 } from "@mui/icons-material";
 import { SvgIconTypeMap } from "@mui/material";
 import { OverridableComponent } from "@mui/material/OverridableComponent";
+import type { Papel } from "@/app/lib/types";
 
 export type RouteConfig = {
   path: string;
@@ -17,7 +21,9 @@ export type RouteConfig = {
   icon: OverridableComponent<SvgIconTypeMap<object, "svg">> & {
     muiName: string;
   };
-  allowedRoles: "all";
+  // "all" = visível para qualquer usuário autenticado; ou a lista de papéis
+  // que enxergam a rota (espelha a proteção @Secured do backend).
+  allowedRoles: "all" | Papel[];
 };
 
 export const sidebarRoutes: RouteConfig[] = [
@@ -25,19 +31,37 @@ export const sidebarRoutes: RouteConfig[] = [
     path: "/dashboard",
     title: "Painel de Controle",
     icon: Dashboard,
-    allowedRoles: "all",
+    allowedRoles: ["ADMINISTRADOR"], // GET /dashboard é só admin
   },
   {
     path: "/appointment",
     title: "Consultas",
     icon: LibraryBooks,
-    allowedRoles: "all",
+    allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
+  },
+  {
+    path: "/agenda",
+    title: "Minha Agenda",
+    icon: Today,
+    allowedRoles: ["MEDICO"], // GET /consultas/agenda-do-dia é só médico
   },
   {
     path: "/management",
     title: "Gerenciamento",
     icon: ManageAccounts,
-    allowedRoles: "all",
+    allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
+  },
+  {
+    path: "/patients",
+    title: "Pacientes",
+    icon: Sick,
+    allowedRoles: ["ADMINISTRADOR", "RECEPCIONISTA"],
+  },
+  {
+    path: "/users",
+    title: "Usuários",
+    icon: Group,
+    allowedRoles: ["ADMINISTRADOR"], // POST /usuarios é só admin
   },
   {
     path: "/setttings",
@@ -46,6 +70,29 @@ export const sidebarRoutes: RouteConfig[] = [
     allowedRoles: "all",
   },
 ];
+
+// Verifica se um papel pode ver/acessar uma rota.
+export function papelPodeAcessar(
+  route: RouteConfig,
+  papel: Papel | null
+): boolean {
+  if (route.allowedRoles === "all") return true;
+  if (papel === null) return false;
+  return route.allowedRoles.includes(papel);
+}
+
+// Tela inicial após o login, conforme o papel do usuário.
+export function rotaInicialPorPapel(papel: Papel): string {
+  switch (papel) {
+    case "MEDICO":
+      return "/agenda";
+    case "ADMINISTRADOR":
+      return "/dashboard";
+    case "RECEPCIONISTA":
+    default:
+      return "/appointment";
+  }
+}
 
 export const appointmentFlowRoutes: RouteConfig[] = [
   {

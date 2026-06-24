@@ -2,7 +2,11 @@
 
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { RouteConfig, sidebarRoutes } from "@/config/Routes";
+import {
+  RouteConfig,
+  sidebarRoutes,
+  papelPodeAcessar,
+} from "@/config/Routes";
 import Image from "next/image";
 import { Button } from "@/app/components/Button/Button";
 import { useAuth } from "@/app/context/AuthContext";
@@ -35,10 +39,17 @@ function NavItem({ route, active }: { route: RouteConfig; active: boolean }) {
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const { loginUsuario, logout } = useAuth();
+  const { loginUsuario, papel, logout } = useAuth();
 
   const isActive = (path: string) =>
     pathname === path || pathname.startsWith(path + "/");
+
+  // Enquanto o papel ainda não foi carregado (papel === null), mostramos todas
+  // as rotas para evitar uma navegação "piscando" vazia; assim que o papel é
+  // conhecido, escondemos o que ele não pode acessar.
+  const rotasVisiveis = sidebarRoutes.filter(
+    (route) => papel === null || papelPodeAcessar(route, papel)
+  );
 
   return (
     <nav
@@ -56,7 +67,7 @@ export default function Sidebar() {
         </div>
         {/* tabs */}
         <div className="flex flex-col gap-3 px-sm pt-md flex-1">
-          {sidebarRoutes.map((route) => (
+          {rotasVisiveis.map((route) => (
             <NavItem
               key={route.path}
               route={route}

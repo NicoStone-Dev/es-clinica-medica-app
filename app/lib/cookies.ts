@@ -9,6 +9,7 @@
 
 export const TOKEN_COOKIE_NAME = "clinica_token";
 export const LOGIN_COOKIE_NAME = "clinica_login";
+export const PAPEL_COOKIE_NAME = "clinica_papel";
 
 export function setCookie(name: string, value: string, maxAgeSeconds: number) {
   if (typeof document === "undefined") return; // só existe no navegador

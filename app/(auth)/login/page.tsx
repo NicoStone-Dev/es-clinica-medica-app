@@ -11,6 +11,7 @@ import LockIcon from "@mui/icons-material/Lock";
 import ArrowIcon from "@mui/icons-material/ArrowForwardIos";
 import { useAuth } from "../../context/AuthContext";
 import { ApiError } from "../../lib/api";
+import { rotaInicialPorPapel } from "@/config/Routes";
 
 export default function login() {
   const [emailLogin, setEmailLogin] = useState("");
@@ -27,8 +28,8 @@ export default function login() {
     setCarregando(true);
 
     try {
-      await fazerLogin(emailLogin, senha);
-      router.push("/appointment");
+      const papel = await fazerLogin(emailLogin, senha);
+      router.push(rotaInicialPorPapel(papel));
     } catch (e) {
       if (e instanceof ApiError && e.status === 401) {
         setErro("Email ou senha incorretos.");

@@ -24,6 +24,21 @@ export type LoginResponse = {
   token: string;
 };
 
+// --- Usuários do sistema ---
+// usado em POST /usuarios (somente ADMINISTRADOR). O papel MEDICO não é aceito
+// aqui: usuários médicos são criados automaticamente em POST /medicos.
+export type NovoUsuario = {
+  login: string;
+  senha: string;
+  papel: Papel;
+};
+
+export type UsuarioDetalhe = {
+  id: number;
+  login: string;
+  papel: Papel;
+};
+
 // --- Médicos ---
 export type MedicoResumo = {
   id: number;
@@ -110,6 +125,15 @@ export type ConsultaDetalhe = {
   pacienteId: number;
   pacienteNome: string;
   dataHora: string;
+};
+
+// --- Dashboard: GET /dashboard (somente ADMINISTRADOR) ---
+export type DashboardResumo = {
+  totalConsultas: number;
+  totalMedicosAtivos: number;
+  totalPacientesAtivos: number;
+  // chave = nome da especialidade (ex: "CARDIOLOGIA"), valor = nº de consultas
+  consultasPorEspecialidade: Record<string, number>;
 };
 
 // --- Paginação (Spring Data Page<T>, usado em GET /medicos e GET /pacientes) ---
