@@ -7,11 +7,9 @@ import { Search, EventNote } from "@mui/icons-material";
 import { TextInput } from "@/app/components/TextInput/TextInput";
 import Table from "@/app/components/Table/Table";
 import { apiFetch, ApiError } from "@/app/lib/api";
-
 import type { Especialidade, Page } from "@/app/lib/types";
-import { useAppointment } from "../appointment/AppointmentContext";
 
-// Assuming a standard ConsultaResumo type based on your context definitions
+// Tipo esperado baseado na sua estrutura
 export type ConsultaResumo = {
   id: number;
   paciente: { nome: string };
@@ -30,9 +28,6 @@ const COLUMNS = [
 export default function AppointmentSearch() {
   const router = useRouter();
 
-  // Utilizing the context provided
-  const { setEspecialidade, setDataHora } = useAppointment();
-
   const [consultas, setConsultas] = useState<ConsultaResumo[]>([]);
   const [busca, setBusca] = useState("");
   const [carregando, setCarregando] = useState(true);
@@ -41,12 +36,11 @@ export default function AppointmentSearch() {
   async function carregarConsultas() {
     setCarregando(true);
     try {
-      // Assuming a generic paginated endpoint for appointments
       const pagina = await apiFetch<Page<ConsultaResumo>>("/consultas");
       setConsultas(pagina.content);
     } catch (e) {
       setErro(
-        e instanceof ApiError ? e.message : "Erro ao carregar as consultas.",
+        e instanceof ApiError ? e.message : "Erro ao carregar as consultas."
       );
     } finally {
       setCarregando(false);
@@ -57,16 +51,16 @@ export default function AppointmentSearch() {
     carregarConsultas();
   }, []);
 
-  // Filter exact specialty only (case-insensitive).
-  // If the search bar is empty, it displays all appointments.
+  // Filtra exatamente pela especialidade (ignorando maiúsculas/minúsculas).
+  // Se vazio, mostra tudo.
   const consultasFiltradas =
     busca.trim() === ""
       ? consultas
       : consultas.filter(
-          (c) => c.especialidade.toUpperCase() === busca.trim().toUpperCase(),
+          (c) => c.especialidade.toUpperCase() === busca.trim().toUpperCase()
         );
 
-  // Flatten nested objects and format dates for the Table component to consume
+  // Formata os dados para o formato plano que a Tabela exige
   const tableData = consultasFiltradas.map((c) => ({
     ...c,
     pacienteNome: c.paciente.nome,
@@ -80,13 +74,11 @@ export default function AppointmentSearch() {
     }),
   }));
 
-  // Clicking an appointment sets context state and navigates
-  function selecionarConsulta(row: (typeof tableData)[0]) {
-    setEspecialidade(row.especialidade);
-    setDataHora(row.dataHora);
-
-    // Example step routing - adjust to your specific architecture
-    // router.push("/appointment/details");
+  // Ao clicar em uma consulta, apenas navegamos para a rota de detalhes passando o ID.
+  // Não precisamos do Contexto de Agendamento aqui!
+  function visualizarConsulta(row: typeof tableData[0]) {
+    // Exemplo: router.push(`/consultas/${row.id}`);
+    console.log("Visualizando detalhes da consulta ID:", row.id);
   }
 
   return (
@@ -96,8 +88,7 @@ export default function AppointmentSearch() {
           Buscar Agendamentos
         </h1>
         <p className="text-blue-gray-400 font-regular text-body">
-          Pesquise consultas fornecendo a especialidade exata (ex: ORTOPEDIA,
-          CARDIOLOGIA).
+          Pesquise consultas fornecendo a especialidade exata (ex: ORTOPEDIA, CARDIOLOGIA).
         </p>
       </div>
 
@@ -125,7 +116,7 @@ export default function AppointmentSearch() {
           <Table
             data={tableData}
             columns={COLUMNS}
-            onRowClick={selecionarConsulta}
+            onRowClick={visualizarConsulta}
           />
         )}
       </div>
