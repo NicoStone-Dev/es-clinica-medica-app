@@ -101,7 +101,7 @@ export default function DataCheck() {
         </p>
       </div>
 
-      <div className="flex flex-col gap-4 rounded-[12px] border border-blue-gray-200 bg-white p-6 max-w-lg">
+      <div className="flex flex-row gap-30 rounded-[12px] border border-blue-gray-200 items-center justify-center bg-white p-6 w-full">
         <div className="flex flex-row items-center gap-3 text-blue-gray-600">
           <Person className="text-primary" />
           <div className="flex flex-col">
@@ -135,7 +135,7 @@ export default function DataCheck() {
 
       {erro && <p className="text-red-500 text-body">{erro}</p>}
 
-      <div className="flex justify-between max-w-lg">
+      <div className="flex justify-between w-full">
         <Button
           variant="ghost"
           type="button"
