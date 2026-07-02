@@ -118,13 +118,19 @@ export type NovaConsulta = {
   dataHora: string; // formato ISO local, ex: "2026-07-01T14:30:00"
 };
 
+// Espelha o enum StatusConsulta do backend (calculado em Consulta.getStatus()).
+export type StatusConsulta = "AGENDADA" | "REALIZADA" | "ATRASADA";
+
 export type ConsultaDetalhe = {
   id: number;
   medicoId: number;
   medicoNome: string;
+  especialidade: Especialidade;
   pacienteId: number;
   pacienteNome: string;
   dataHora: string;
+  realizada: boolean;
+  status: StatusConsulta;
 };
 
 // --- Dashboard: GET /dashboard (somente ADMINISTRADOR) ---

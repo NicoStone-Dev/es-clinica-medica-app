@@ -14,7 +14,7 @@ export class ApiError extends Error {
 }
 
 type ApiOptions = {
-  method?: "GET" | "POST" | "PUT" | "DELETE";
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   body?: unknown;
   auth?: boolean; // false = não envia o token (usado só no login)
 };

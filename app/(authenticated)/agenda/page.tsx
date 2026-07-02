@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { Schedule, Person } from "@mui/icons-material";
+import { Schedule, Person, CheckCircle } from "@mui/icons-material";
+import { Button } from "@/app/components/Button/Button";
+import { StatusBadge } from "@/app/components/StatusBadge/StatusBadge";
 import { apiFetch, ApiError } from "@/app/lib/api";
 import type { ConsultaDetalhe } from "@/app/lib/types";
 
@@ -24,6 +26,8 @@ export default function AgendaPage() {
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState<string | null>(null);
   const [semPermissao, setSemPermissao] = useState(false);
+  const [marcandoId, setMarcandoId] = useState<number | null>(null);
+  const [erroAcao, setErroAcao] = useState<string | null>(null);
 
   useEffect(() => {
     async function carregar() {
@@ -48,6 +52,26 @@ export default function AgendaPage() {
     carregar();
   }, []);
 
+  async function marcarComoRealizada(id: number) {
+    setErroAcao(null);
+    setMarcandoId(id);
+    try {
+      const atualizada = await apiFetch<ConsultaDetalhe>(
+        `/consultas/${id}/realizada`,
+        { method: "PATCH" }
+      );
+      setConsultas((prev) => prev.map((c) => (c.id === id ? atualizada : c)));
+    } catch (e) {
+      setErroAcao(
+        e instanceof ApiError
+          ? e.message
+          : "Erro ao marcar a consulta como realizada."
+      );
+    } finally {
+      setMarcandoId(null);
+    }
+  }
+
   return (
     <div className="flex flex-col gap-6 px-16 py-8">
       <div className="gap-0">
@@ -58,6 +82,8 @@ export default function AgendaPage() {
           {HOJE}
         </p>
       </div>
+
+      {erroAcao && <p className="text-red-500 text-body">{erroAcao}</p>}
 
       {semPermissao ? (
         <p className="text-blue-gray-400 text-body">
@@ -77,19 +103,40 @@ export default function AgendaPage() {
           {consultas.map((consulta) => (
             <div
               key={consulta.id}
-              className="flex flex-row items-center gap-6 rounded-[12px] border border-blue-gray-200 bg-white p-5"
+              className="flex flex-row items-center justify-between gap-6 rounded-[12px] border border-blue-gray-200 bg-white p-5"
             >
-              <div className="flex flex-row items-center gap-2 text-primary font-semibold text-body-emph min-w-24">
-                <Schedule />
-                {formatarHora(consulta.dataHora)}
-              </div>
-              <div className="h-10 w-px bg-blue-gray-200" />
-              <div className="flex flex-row items-center gap-3 text-blue-gray-600">
-                <Person className="text-blue-gray-400" />
-                <div className="flex flex-col">
-                  <span className="text-small text-blue-gray-400">Paciente</span>
-                  <span className="font-bold">{consulta.pacienteNome}</span>
+              <div className="flex flex-row items-center gap-6">
+                <div className="flex flex-row items-center gap-2 text-primary font-semibold text-body-emph min-w-24">
+                  <Schedule />
+                  {formatarHora(consulta.dataHora)}
                 </div>
+                <div className="h-10 w-px bg-blue-gray-200" />
+                <div className="flex flex-row items-center gap-3 text-blue-gray-600">
+                  <Person className="text-blue-gray-400" />
+                  <div className="flex flex-col">
+                    <span className="text-small text-blue-gray-400">
+                      Paciente
+                    </span>
+                    <span className="font-bold">{consulta.pacienteNome}</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-row items-center gap-4">
+                <StatusBadge status={consulta.status} />
+                {consulta.status !== "REALIZADA" && (
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    rightIcon={<CheckCircle fontSize="small" />}
+                    disabled={marcandoId === consulta.id}
+                    onClick={() => marcarComoRealizada(consulta.id)}
+                  >
+                    {marcandoId === consulta.id
+                      ? "Marcando…"
+                      : "Marcar como realizada"}
+                  </Button>
+                )}
               </div>
             </div>
           ))}
