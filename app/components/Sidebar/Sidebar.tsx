@@ -91,9 +91,9 @@ export default function Sidebar() {
               alt="logo"
             />
             <div className="flex flex-col">
-              {/* O backend ainda não tem um endpoint "/usuarios/me", então só
-                  conseguimos mostrar o login (geralmente o e-mail) que a
-                  pessoa digitou — não o nome real nem o papel (cargo). */}
+              {/* Mostramos o login (geralmente o e-mail) que a pessoa digitou.
+                  O papel vem de GET /usuarios/me e fica no AuthContext, mas o
+                  nome real do usuário ainda não é exposto pela API. */}
               <p className=" text-blue-gray-600 font-bold">
                 {loginUsuario ?? "Usuário"}
               </p>
